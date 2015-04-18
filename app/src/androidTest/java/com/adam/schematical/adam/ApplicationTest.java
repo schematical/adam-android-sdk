@@ -1,4 +1,4 @@
-package com.adam.schematical.adam;
+package com.schematical.adam;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

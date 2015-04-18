@@ -1,4 +1,4 @@
-package com.adam.schematical.adam;
+package com.schematical.adam;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -8,13 +8,17 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class AdamMapsActivity extends FragmentActivity {
-
+public class AdamWorldActivity extends FragmentActivity {
+    private static AdamWorldActivity instance;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
+    public static AdamWorldActivity getInstance(){
+        return instance;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         setContentView(R.layout.activity_adam_maps);
         setUpMapIfNeeded();
     }
