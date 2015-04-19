@@ -15,7 +15,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.schematical.adam.AdamWorldActivity;
+import com.schematical.adam.location.AdamLocation;
 import com.schematical.adam.signal.iAdamSignalDriver;
 
 
@@ -37,7 +39,7 @@ public class AdamGPSDriver implements iAdamSignalDriver, GoogleApiClient.Connect
 
         // Register the listener with the Location Manager to receive location updates
         //am.SetStatus("Waiting for GPS");
-        Log.d("Adam", "REQUESTING!");
+
         //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
     }
@@ -54,9 +56,10 @@ public class AdamGPSDriver implements iAdamSignalDriver, GoogleApiClient.Connect
     public void Connect(){}
     public void Disconnect(){}
     public void onLocationChanged(Location location) {
-
-
+        //AdamWorldActivity.getInstance().addPin(new LatLng(location.getLatitude(), location.getLongitude()));
+        AdamLocation aLocation = new AdamLocation(location);
         Log.d("Adam", "LOCATION CHANGED!");
+        AdamWorldActivity.getInstance().onLocationChanged(aLocation);
 
     }
 /*

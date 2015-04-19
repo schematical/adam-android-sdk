@@ -4,6 +4,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by user1a on 10/16/13.
@@ -45,21 +47,22 @@ public class AdamScanResultBase {
         return frequency;
     }
     public JSONObject toJSONObject() {
-        JSONObject jObj = new JSONObject();
-
-        try {
-            jObj.put("id", this.id);
-            jObj.put("rssi", this.rssi);
-            jObj.put("frequency", this.frequency);
-            jObj.put("timestamp", this.timestamp);
-            jObj.put("type", this.type);
-            jObj.put("alias", this.alias);
-            jObj.put("extra", this.extra);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
+        JSONObject jObj = new JSONObject(
+                this.toMap()
+        );
         return jObj;
 
+    }
+    public Map<String, Object> toMap(){
+        Map rMap = new HashMap<String, Object>();
+
+        rMap.put("id", this.id);
+        rMap.put("rssi", this.rssi);
+        rMap.put("frequency", this.frequency);
+        rMap.put("timestamp", this.timestamp);
+        rMap.put("type", this.type);
+        rMap.put("alias", this.alias);
+        rMap.put("extra", this.extra);
+        return rMap;
     }
 }

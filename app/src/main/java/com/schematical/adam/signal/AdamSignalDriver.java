@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * Created by user1a on 10/16/13.
@@ -47,6 +48,17 @@ public class AdamSignalDriver {
             String key = keys.nextElement();
             AdamScanResultBase sr = aScanResults.get(key);
             aReturn.add(sr.toJSONObject());
+        }
+        return aReturn;
+
+    }
+    public static ArrayList<Map> GetResultsArray(){
+        ArrayList<Map> aReturn = new ArrayList<Map>();
+        Enumeration<String> keys = aScanResults.keys();
+        while(keys.hasMoreElements()){
+            String key = keys.nextElement();
+            AdamScanResultBase sr = aScanResults.get(key);
+            aReturn.add(sr.toMap());
         }
         return aReturn;
 

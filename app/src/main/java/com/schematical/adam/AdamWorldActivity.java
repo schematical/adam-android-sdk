@@ -2,6 +2,7 @@ package com.schematical.adam;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -10,12 +11,23 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.schematical.adam.comm.socket.AdamSocketClient;
+import com.schematical.adam.location.AdamLocation;
+import com.schematical.adam.signal.AdamSignalDriver;
 import com.schematical.adam.signal.gps.AdamGPSDriver;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
 
 public class AdamWorldActivity extends FragmentActivity {
     private static AdamWorldActivity instance;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private GoogleApiClient mGoogleApiClient;
+    protected AdamSocketClient client;
+    private AdamLocation lastLocation;
+    private AdamSignalDriver signalDriver;
 
 
     public static AdamWorldActivity getInstance(){
@@ -29,6 +41,15 @@ public class AdamWorldActivity extends FragmentActivity {
         setUpMapIfNeeded();
 
         AdamGPSDriver gpsDriver = new AdamGPSDriver();
+        signalDriver = new AdamSignalDriver();
+        AdamSignalDriver.Connect();
+        client = new AdamSocketClient();
+        try {
+            client.Connect();
+        } catch (URISyntaxException e) {
+            Log.d("Adam","FAILED:" + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -72,6 +93,25 @@ public class AdamWorldActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+    }
+    public void addPin(LatLng latLng){
+
+    }
+
+    public void onLocationChanged(AdamLocation aLocation) {
+
+        lastLocation = aLocation;
+
+        JSONObject jObj = new JSONObject();
+        try {
+            jObj.put("listener", lastLocation.toJSON());
+            jObj.put("pings", new JSONArray(AdamSignalDriver.GetResultsArray()));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        client.Send("ping", jObj);
+        Log.d("Adam", "Sending Data");
     }
 }
