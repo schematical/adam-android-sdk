@@ -15,11 +15,13 @@ import com.schematical.adam.comm.socket.AdamSocketClient;
 import com.schematical.adam.location.AdamLocation;
 import com.schematical.adam.signal.AdamSignalDriver;
 import com.schematical.adam.signal.gps.AdamGPSDriver;
+import com.schematical.adam.storage.AdamStorageDriver;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class AdamWorldActivity extends FragmentActivity {
@@ -48,6 +50,15 @@ public class AdamWorldActivity extends FragmentActivity {
             client.Connect();
         } catch (URISyntaxException e) {
             Log.d("Adam","FAILED:" + e.getMessage());
+            e.printStackTrace();
+        }
+        //Log the cache file
+        try {
+            String[] data = AdamStorageDriver.readAsArray();
+            for(int i = 0; i < data.length; i++) {
+                Log.d("Adam", "Adam Storage Line:" + i + "\n" + data[i]);
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -112,6 +123,12 @@ public class AdamWorldActivity extends FragmentActivity {
             e.printStackTrace();
         }
         client.Send("ping", jObj);
+        try {
+            AdamStorageDriver.write(jObj.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
         Log.d("Adam", "Sending Data");
     }
 }
