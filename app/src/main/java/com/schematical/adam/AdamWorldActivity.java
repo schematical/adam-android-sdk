@@ -3,14 +3,20 @@ package com.schematical.adam;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.schematical.adam.signal.gps.AdamGPSDriver;
+
 public class AdamWorldActivity extends FragmentActivity {
     private static AdamWorldActivity instance;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private GoogleApiClient mGoogleApiClient;
+
 
     public static AdamWorldActivity getInstance(){
         return instance;
@@ -21,6 +27,8 @@ public class AdamWorldActivity extends FragmentActivity {
         instance = this;
         setContentView(R.layout.activity_adam_maps);
         setUpMapIfNeeded();
+
+        AdamGPSDriver gpsDriver = new AdamGPSDriver();
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.schematical.adam.signal;
 
+import android.app.Activity;
+
+import com.schematical.adam.AdamWorldActivity;
 import com.schematical.adam.signal.bluetooth.AdamBluetoothDriver;
 import com.schematical.adam.signal.gps.AdamGPSDriver;
 import com.schematical.adam.signal.wifi.AdamWifiDriver;
