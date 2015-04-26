@@ -35,8 +35,8 @@ public class AdamSocketClient extends AdamCommClientBase {
         return false;
     }
 
-    public void Connect() throws URISyntaxException {
-        socket = IO.socket("http://192.168.0.105:3030");
+    public void Connect(String url) throws URISyntaxException {
+        socket = IO.socket(url);
         socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 
             @Override
@@ -62,7 +62,7 @@ public class AdamSocketClient extends AdamCommClientBase {
 
         });
         socket.connect();
-        Log.d("Adam", "CONNECTING TO SOCKET");
+        Log.d("Adam", "CONNECTING TO SOCKET: " + url);
     }
 
     public void Send(String message_type, JSONObject data){

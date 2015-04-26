@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Adam</string>
     <string name="title_activity_adam_maps">Map</string>
+    <string name="schematical_socket_host">developers.schematical.com</string>
 </resources>

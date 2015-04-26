@@ -28,6 +28,7 @@ public class AdamSignalListAdaptor extends BaseAdapter {
     }
     public void refresh(){
         signals = AdamSignalDriver.GetResults();
+        notifyDataSetChanged();
     }
 
     public int getCount() {
@@ -73,7 +74,7 @@ public class AdamSignalListAdaptor extends BaseAdapter {
             textView = (TextView) convertView;
         }
         final AdamScanResultBase result = getItem(position);
-        textView.setText(result.getAlias());
+        textView.setText(result.getAlias() + "  (" + result.getRssi() + ")");
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

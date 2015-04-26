@@ -1,6 +1,7 @@
 package com.schematical.adam;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -14,6 +15,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 
 import com.schematical.adam.comm.socket.AdamSocketClient;
@@ -56,7 +59,7 @@ public class AdamWorldActivity extends FragmentActivity {
         AdamSignalDriver.Connect();
         client = new AdamSocketClient();
         try {
-            client.Connect();
+            client.Connect("http://" + getString(R.string.schematical_socket_host));
         } catch (URISyntaxException e) {
             Log.d("Adam","FAILED:" + e.getMessage());
             e.printStackTrace();
@@ -72,22 +75,34 @@ public class AdamWorldActivity extends FragmentActivity {
             public void onClick(View v) {
                 // Perform action on click
                 setContentView(R.layout.signal_list);
-                ListView listView = (ListView) findViewById(R.id.signal_list_view);
+                final ListView listView = (ListView) findViewById(R.id.signal_list_view);
                 Activity inst = getInstance();
                 final AdamSignalListAdaptor adaptor =  new AdamSignalListAdaptor(inst);
                 listView.setAdapter(adaptor);
-                SwipeRefreshLayout parentLayout = (SwipeRefreshLayout) findViewById(R.id.signal_list);
+                final SwipeRefreshLayout parentLayout = (SwipeRefreshLayout) findViewById(R.id.signal_list);
                 parentLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
                         adaptor.refresh();
+                        parentLayout.setRefreshing(false);
+
                     }
                 });
+            }
+        });
+
+
+
+        Button btnPing = (Button) findViewById(R.id.ping);
+        btnPing.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ping();
             }
         });
     }
     public void setTarget(AdamScanResultBase result){
         target = result;
+
     }
 
     protected  void logCacheFile(){
@@ -152,6 +167,25 @@ public class AdamWorldActivity extends FragmentActivity {
     public void onLocationChanged(AdamLocation aLocation) {
 
         lastLocation = aLocation;
+
+        // Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(aLocation.getLatitude(), aLocation.getLongitude()))      // Sets the center of the map to Mountain View
+                .zoom(17)                   // Sets the zoom
+                .bearing(90)                // Sets the orientation of the camera to east
+                .tilt(30)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mMap.clear();
+        Circle circle = mMap.addCircle(new CircleOptions()
+                .center(new LatLng(aLocation.getLatitude(), aLocation.getLongitude()))
+                .radius(aLocation.getAccuracy())
+                .strokeColor(Color.RED)
+                .fillColor(Color.BLUE));
+       // ping();
+
+    }
+    public void ping(){
         ArrayList<Map> signals = AdamSignalDriver.GetResultsArray();
         JSONObject jObj = new JSONObject();
         try {
@@ -170,21 +204,5 @@ public class AdamWorldActivity extends FragmentActivity {
             e.printStackTrace();
 
         }
-        // Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(aLocation.getLatitude(), aLocation.getLongitude()))      // Sets the center of the map to Mountain View
-                .zoom(17)                   // Sets the zoom
-                .bearing(90)                // Sets the orientation of the camera to east
-                .tilt(30)                   // Sets the tilt of the camera to 30 degrees
-                .build();                   // Creates a CameraPosition from the builder
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-     /*   for(int i = 0; i < signals.size(); i++){
-            Circle circle = map.addCircle(new CircleOptions()
-                    .center(new LatLng(-33.87365, 151.20689))
-                    .radius(10000)
-                    .strokeColor(Color.RED)
-                    .fillColor(Color.BLUE));
-        }*/
     }
 }
