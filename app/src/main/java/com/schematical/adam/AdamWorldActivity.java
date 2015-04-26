@@ -204,5 +204,6 @@ public class AdamWorldActivity extends FragmentActivity {
             e.printStackTrace();
 
         }
+        AdamSignalDriver.clearOldResults("Wifi");
     }
 }

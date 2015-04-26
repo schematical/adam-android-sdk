@@ -39,16 +39,14 @@ public class AdamWifiDriver extends BroadcastReceiver implements iAdamSignalDriv
         wifiManager.startScan();
     }
     public void onReceive(Context c, Intent intent) {
-
+        AdamSignalDriver.clearOldResults("Wifi");
         wifiList = wifiManager.getScanResults();
 
-            sb = new StringBuilder();
+        for(int i = 0; i < wifiList.size(); i++){
 
-            for(int i = 0; i < wifiList.size(); i++){
-
-                AdamWifiScanResult sr = new AdamWifiScanResult(wifiList.get(i));
-                AdamSignalDriver.AddScanResult(sr);
-            }
+            AdamWifiScanResult sr = new AdamWifiScanResult(wifiList.get(i));
+            AdamSignalDriver.AddScanResult(sr);
+        }
     }
     public boolean IsWifiConnected(){
         ConnectivityManager connManager = (ConnectivityManager) AdamWorldActivity.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);

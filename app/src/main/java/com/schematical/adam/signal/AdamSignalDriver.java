@@ -27,6 +27,15 @@ public class AdamSignalDriver {
         adamWifiDriver = new AdamWifiDriver();
         adamBluetoothDriver = new AdamBluetoothDriver();
     }
+    public static void clearOldResults(String type){
+        Enumeration<String> keys = aScanResults.keys();
+        while(keys.hasMoreElements()){
+            String key = keys.nextElement();
+            if(aScanResults.get(key).type == type){
+                aScanResults.remove(key);
+            }
+        }
+    }
     public static void AddScanResult(AdamScanResultBase scanResult){
 
         String key = scanResult.getType() + ":" + scanResult.getMac();
