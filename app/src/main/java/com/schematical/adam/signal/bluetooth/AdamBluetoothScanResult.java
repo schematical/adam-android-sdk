@@ -14,7 +14,7 @@ public class AdamBluetoothScanResult extends AdamScanResultBase {
     AdamBluetoothScanResult(BluetoothDevice nDevice, int nRssi){
         device = nDevice;
         alias = device.getName();
-        id = device.getAddress();
+        mac = device.getAddress();
         rssi = nRssi;
         extra = device.toString() + "  --- " +device.getBluetoothClass().toString();
 

@@ -14,7 +14,7 @@ public class AdamWifiScanResult extends AdamScanResultBase {
     AdamWifiScanResult(ScanResult nDevice){
         device = nDevice;
         alias = device.SSID;
-        id = device.BSSID;
+        mac = device.BSSID;
         extra = device.capabilities;
         frequency = device.frequency;
         rssi = device.level;

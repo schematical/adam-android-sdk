@@ -1,9 +1,7 @@
 package com.schematical.adam.signal;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +12,7 @@ public class AdamScanResultBase {
 
 
     protected String alias;
-    protected String id;
+    protected String mac;
     protected int rssi;
     protected String type;
     protected String extra;
@@ -27,8 +25,8 @@ public class AdamScanResultBase {
         return alias;
     }
 
-    public String getId() {
-        return id;
+    public String getMac() {
+        return mac;
     }
 
     public int getRssi() {
@@ -56,7 +54,7 @@ public class AdamScanResultBase {
     public Map<String, Object> toMap(){
         Map rMap = new HashMap<String, Object>();
 
-        rMap.put("id", this.id);
+        rMap.put("mac", this.mac);
         rMap.put("rssi", this.rssi);
         rMap.put("frequency", this.frequency);
         rMap.put("timestamp", this.timestamp);

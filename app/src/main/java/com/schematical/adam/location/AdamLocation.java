@@ -17,7 +17,7 @@ public class AdamLocation extends Location {
     public JSONObject toJSON() throws JSONException {
         JSONObject jObj = new JSONObject();
         jObj.put("lat", this.getLatitude());
-        jObj.put("lng", this.getLatitude());
+        jObj.put("lng", this.getLongitude());
         jObj.put("altitude", this.getAltitude());
         jObj.put("accuracy", this.getAccuracy());
 

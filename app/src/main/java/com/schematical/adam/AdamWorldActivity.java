@@ -1,18 +1,24 @@
 package com.schematical.adam;
 
+import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.schematical.adam.comm.socket.AdamSocketClient;
 import com.schematical.adam.location.AdamLocation;
+import com.schematical.adam.signal.AdamScanResultBase;
 import com.schematical.adam.signal.AdamSignalDriver;
 import com.schematical.adam.signal.gps.AdamGPSDriver;
 import com.schematical.adam.storage.AdamStorageDriver;
@@ -23,6 +29,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class AdamWorldActivity extends FragmentActivity {
     private static AdamWorldActivity instance;
@@ -30,6 +38,7 @@ public class AdamWorldActivity extends FragmentActivity {
     protected AdamSocketClient client;
     private AdamLocation lastLocation;
     private AdamSignalDriver signalDriver;
+    private AdamScanResultBase target;
 
 
     public static AdamWorldActivity getInstance(){
@@ -39,8 +48,8 @@ public class AdamWorldActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;
-        setContentView(R.layout.activity_adam_maps);
-        setUpMapIfNeeded();
+       setupUI();
+
 
         AdamGPSDriver gpsDriver = new AdamGPSDriver();
         signalDriver = new AdamSignalDriver();
@@ -52,6 +61,36 @@ public class AdamWorldActivity extends FragmentActivity {
             Log.d("Adam","FAILED:" + e.getMessage());
             e.printStackTrace();
         }
+
+    }
+
+    private void setupUI() {
+        setContentView(R.layout.activity_adam_maps);
+        setUpMapIfNeeded();
+        Button menu = (Button) findViewById(R.id.menu);
+        menu.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                setContentView(R.layout.signal_list);
+                ListView listView = (ListView) findViewById(R.id.signal_list_view);
+                Activity inst = getInstance();
+                final AdamSignalListAdaptor adaptor =  new AdamSignalListAdaptor(inst);
+                listView.setAdapter(adaptor);
+                SwipeRefreshLayout parentLayout = (SwipeRefreshLayout) findViewById(R.id.signal_list);
+                parentLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        adaptor.refresh();
+                    }
+                });
+            }
+        });
+    }
+    public void setTarget(AdamScanResultBase result){
+        target = result;
+    }
+
+    protected  void logCacheFile(){
         //Log the cache file
         try {
             String[] data = AdamStorageDriver.readAsArray();
@@ -113,22 +152,39 @@ public class AdamWorldActivity extends FragmentActivity {
     public void onLocationChanged(AdamLocation aLocation) {
 
         lastLocation = aLocation;
-
+        ArrayList<Map> signals = AdamSignalDriver.GetResultsArray();
         JSONObject jObj = new JSONObject();
         try {
             jObj.put("listener", lastLocation.toJSON());
-            jObj.put("pings", new JSONArray(AdamSignalDriver.GetResultsArray()));
+            jObj.put("pings", new JSONArray(signals));
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
         client.Send("ping", jObj);
+
+        Log.d("Adam", "Sending Data");
         try {
             AdamStorageDriver.write(jObj.toString());
         } catch (IOException e) {
             e.printStackTrace();
 
         }
-        Log.d("Adam", "Sending Data");
+        // Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(aLocation.getLatitude(), aLocation.getLongitude()))      // Sets the center of the map to Mountain View
+                .zoom(17)                   // Sets the zoom
+                .bearing(90)                // Sets the orientation of the camera to east
+                .tilt(30)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+     /*   for(int i = 0; i < signals.size(); i++){
+            Circle circle = map.addCircle(new CircleOptions()
+                    .center(new LatLng(-33.87365, 151.20689))
+                    .radius(10000)
+                    .strokeColor(Color.RED)
+                    .fillColor(Color.BLUE));
+        }*/
     }
 }

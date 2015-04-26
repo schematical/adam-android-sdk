@@ -1,8 +1,7 @@
 package com.schematical.adam.signal;
 
-import android.app.Activity;
+import android.util.Log;
 
-import com.schematical.adam.AdamWorldActivity;
 import com.schematical.adam.signal.bluetooth.AdamBluetoothDriver;
 import com.schematical.adam.signal.gps.AdamGPSDriver;
 import com.schematical.adam.signal.wifi.AdamWifiDriver;
@@ -29,7 +28,9 @@ public class AdamSignalDriver {
         adamBluetoothDriver = new AdamBluetoothDriver();
     }
     public static void AddScanResult(AdamScanResultBase scanResult){
-        String key = scanResult.getType() + ":" + scanResult.getId();
+
+        String key = scanResult.getType() + ":" + scanResult.getMac();
+        Log.d("Adam", "Got Scan result: " + key);
         aScanResults.put(key, scanResult);
     }
     public static void Connect(){
@@ -59,6 +60,17 @@ public class AdamSignalDriver {
             String key = keys.nextElement();
             AdamScanResultBase sr = aScanResults.get(key);
             aReturn.add(sr.toMap());
+        }
+        return aReturn;
+
+    }
+    public static ArrayList<AdamScanResultBase> GetResults(){
+        ArrayList<AdamScanResultBase> aReturn = new ArrayList<AdamScanResultBase>();
+        Enumeration<String> keys = aScanResults.keys();
+        while(keys.hasMoreElements()){
+            String key = keys.nextElement();
+            AdamScanResultBase sr = aScanResults.get(key);
+            aReturn.add(sr);
         }
         return aReturn;
 
