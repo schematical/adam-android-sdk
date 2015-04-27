@@ -14,7 +14,7 @@ public class AdamScanResultBase {
     protected String alias;
     protected String mac;
     protected int rssi;
-    protected String type;
+    protected  String type;
     protected String extra;
     protected int frequency;
     protected long timestamp;
@@ -34,6 +34,7 @@ public class AdamScanResultBase {
     }
 
     public String getType() {
+
         return type;
     }
 

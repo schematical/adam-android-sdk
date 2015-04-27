@@ -9,9 +9,10 @@ import com.schematical.adam.signal.AdamScanResultBase;
  */
 public class AdamWifiScanResult extends AdamScanResultBase {
     public ScanResult device;
-    protected String type = "wifi";
+    protected String TYPE_CONST = "wifi";
 
     AdamWifiScanResult(ScanResult nDevice){
+        type = TYPE_CONST;
         device = nDevice;
         alias = device.SSID;
         mac = device.BSSID;

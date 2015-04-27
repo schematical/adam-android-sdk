@@ -31,10 +31,12 @@ public class AdamSignalDriver {
         Enumeration<String> keys = aScanResults.keys();
         while(keys.hasMoreElements()){
             String key = keys.nextElement();
-            if(aScanResults.get(key).type == type){
+            Log.d("Adam",key + ":" + aScanResults.get(key).getType() + "==" + type);
+            if(aScanResults.get(key).getType() == type){
                 aScanResults.remove(key);
             }
         }
+        Log.d("Adam", "clearOldResults Finished: " + aScanResults.size());
     }
     public static void AddScanResult(AdamScanResultBase scanResult){
 

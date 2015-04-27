@@ -188,6 +188,7 @@ public class AdamWorldActivity extends FragmentActivity {
     public void ping(){
         ArrayList<Map> signals = AdamSignalDriver.GetResultsArray();
         JSONObject jObj = new JSONObject();
+
         try {
             jObj.put("listener", lastLocation.toJSON());
             jObj.put("pings", new JSONArray(signals));
@@ -204,6 +205,6 @@ public class AdamWorldActivity extends FragmentActivity {
             e.printStackTrace();
 
         }
-        AdamSignalDriver.clearOldResults("Wifi");
+        AdamSignalDriver.clearOldResults("wifi");
     }
 }
