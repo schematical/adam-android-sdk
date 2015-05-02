@@ -19,6 +19,14 @@
                 android:layout_height="wrap_content"
 
                 android:text="Menu"/>
+
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto Ping"
+                android:id="@+id/auto_ping"
+               />
         </TableRow>
     </TableLayout>
 </fragment>

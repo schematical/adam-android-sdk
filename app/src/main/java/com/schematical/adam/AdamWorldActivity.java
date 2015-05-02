@@ -9,7 +9,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,6 +45,7 @@ public class AdamWorldActivity extends FragmentActivity {
     private AdamLocation lastLocation;
     private AdamSignalDriver signalDriver;
     private AdamScanResultBase target;
+    private boolean blnAutoPing = false;
 
 
     public static AdamWorldActivity getInstance(){
@@ -90,6 +94,23 @@ public class AdamWorldActivity extends FragmentActivity {
                 });
             }
         });
+        Switch autoPing = (Switch) findViewById(R.id.auto_ping);
+        autoPing.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    blnAutoPing = isChecked;
+
+
+                    if (isChecked) {
+                        // Enable vibrate
+                        Log.d("Adam", "Set to on");
+                    } else {
+                        // Disable vibrate
+                        Log.d("Adam", "Set to off");
+                    }
+
+            }
+        });
 
 
 
@@ -100,6 +121,7 @@ public class AdamWorldActivity extends FragmentActivity {
             }
         });
     }
+
     public void setTarget(AdamScanResultBase result){
         target = result;
 
@@ -177,11 +199,18 @@ public class AdamWorldActivity extends FragmentActivity {
                 .build();                   // Creates a CameraPosition from the builder
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         mMap.clear();
+        int circleColor = Color.RED;
+        Log.d("Adam", "Accuracy:" + Float.toString(aLocation.getAccuracy()));
+        if(blnAutoPing && aLocation.getAccuracy() <= 10){
+            ping();
+            circleColor = Color.GREEN;
+        }
         Circle circle = mMap.addCircle(new CircleOptions()
                 .center(new LatLng(aLocation.getLatitude(), aLocation.getLongitude()))
                 .radius(aLocation.getAccuracy())
-                .strokeColor(Color.RED)
+                .strokeColor(circleColor)
                 .fillColor(Color.BLUE));
+
        // ping();
 
     }

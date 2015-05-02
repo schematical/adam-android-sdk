@@ -31,7 +31,7 @@ public class AdamSignalDriver {
         Enumeration<String> keys = aScanResults.keys();
         while(keys.hasMoreElements()){
             String key = keys.nextElement();
-            Log.d("Adam",key + ":" + aScanResults.get(key).getType() + "==" + type);
+            //Log.d("Adam",key + ":" + aScanResults.get(key).getType() + "==" + type);
             if(aScanResults.get(key).getType() == type){
                 aScanResults.remove(key);
             }
@@ -41,7 +41,7 @@ public class AdamSignalDriver {
     public static void AddScanResult(AdamScanResultBase scanResult){
 
         String key = scanResult.getType() + ":" + scanResult.getMac();
-        Log.d("Adam", "Got Scan result: " + key);
+        //Log.d("Adam", "Got Scan result: " + key);
         aScanResults.put(key, scanResult);
     }
     public static void Connect(){
