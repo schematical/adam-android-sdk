@@ -2,6 +2,7 @@ package com.schematical.adam;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -219,13 +220,19 @@ public class AdamWorldActivity extends FragmentActivity {
         JSONObject jObj = new JSONObject();
 
         try {
-            jObj.put("listener", lastLocation.toJSON());
+            if(lastLocation != null) {
+                jObj.put("listener", lastLocation.toJSON());
+            }else{
+                String  android_id = Settings.Secure.getString(AdamWorldActivity.getInstance().getContentResolver(), Settings.Secure.ANDROID_ID);
+                jObj.put("listener_id", android_id);
+            }
             jObj.put("pings", new JSONArray(signals));
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
         client.Send("ping", jObj);
+        //  client.Send("ping_debug", jObj);
 
         Log.d("Adam", "Sending Data");
         try {
