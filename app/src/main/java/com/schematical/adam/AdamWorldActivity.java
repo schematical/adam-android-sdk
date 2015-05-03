@@ -2,6 +2,8 @@ package com.schematical.adam;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -47,7 +49,17 @@ public class AdamWorldActivity extends FragmentActivity {
     private AdamSignalDriver signalDriver;
     private AdamScanResultBase target;
     private boolean blnAutoPing = false;
-
+    private Handler mHandler;
+    Runnable myTask = new Runnable() {
+        @Override
+        public void run() {
+            if(blnAutoPing ) {
+                //do work
+                ping();
+            }
+            mHandler.postDelayed(this, 5000);
+        }
+    };
 
     public static AdamWorldActivity getInstance(){
         return instance;
@@ -55,6 +67,7 @@ public class AdamWorldActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mHandler = new Handler(Looper.getMainLooper());
         instance = this;
        setupUI();
 
@@ -70,6 +83,19 @@ public class AdamWorldActivity extends FragmentActivity {
             e.printStackTrace();
         }
 
+    }
+    //just as an example, we'll start the task when the activity is started
+    @Override
+    public void onStart() {
+        super.onStart();
+        mHandler.postDelayed(myTask, 5000);
+    }
+
+    //at some point in your program you will probably want the handler to stop (in onStop is a good place)
+    @Override
+    public void onStop() {
+        super.onStop();
+        mHandler.removeCallbacks(myTask);
     }
 
     private void setupUI() {
@@ -231,9 +257,9 @@ public class AdamWorldActivity extends FragmentActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        client.Send("ping", jObj);
-        //  client.Send("ping_debug", jObj);
-
+        //client.Send("ping", jObj);
+        //client.Send("ping_debug", jObj);
+        client.Send("find_loc_from_anchors", jObj);
         Log.d("Adam", "Sending Data");
         try {
             AdamStorageDriver.write(jObj.toString());
@@ -241,6 +267,9 @@ public class AdamWorldActivity extends FragmentActivity {
             e.printStackTrace();
 
         }
-        AdamSignalDriver.clearOldResults("wifi");
+        //AdamSignalDriver.clearOldResults("wifi");
     }
+
+
+
 }
