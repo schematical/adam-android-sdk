@@ -64,6 +64,9 @@ public class AdamSocketClient extends AdamCommClientBase {
         socket.connect();
         Log.d("Adam", "CONNECTING TO SOCKET: " + url);
     }
+    public void on(String event, Emitter.Listener fn){
+        socket.on(event, fn);
+    }
 
     public void Send(String message_type, JSONObject data){
         Send(message_type, data.toString());

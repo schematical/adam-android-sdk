@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.ToggleButton;
 
+import com.github.nkzawa.emitter.Emitter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -82,6 +83,50 @@ public class AdamWorldActivity extends FragmentActivity {
             Log.d("Adam","FAILED:" + e.getMessage());
             e.printStackTrace();
         }
+        client.on("target_calced", new Emitter.Listener() {
+
+            @Override
+            public void call(final Object... args) {
+                Log.d("Adam", "RECIVED SOCKET EVENT: target_calced");
+                Handler handler = new Handler(Looper.getMainLooper());
+                final JSONObject data = (JSONObject) args[0];
+                handler.post(new Runnable(){
+
+                         @Override
+                         public void run() {
+
+
+
+                            mMap.clear();
+                            try {
+                                JSONObject pos = (JSONObject) data.get("pos");
+                                LatLng newLatLng = new LatLng(
+                                        (Double) pos.get("lat"),
+                                        (Double) pos.get("lng")
+                                );
+                                Circle circle = mMap.addCircle(new CircleOptions()
+                                                .center(newLatLng)
+                                                .radius(1)
+                                                .strokeColor(Color.GREEN)
+                                                .fillColor(Color.BLUE)
+                                );
+
+                                // Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
+                                CameraPosition cameraPosition = new CameraPosition.Builder()
+                                        .target(newLatLng)      // Sets the center of the map to Mountain View
+                                        .zoom(18)                   // Sets the zoom
+                                        .bearing(0)//90)                // Sets the orientation of the camera to east
+                                        .tilt(0)//30                   // Sets the tilt of the camera to 30 degrees
+                                        .build();                   // Creates a CameraPosition from the builder
+                                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                         }
+                });
+            }
+
+        });
 
     }
     //just as an example, we'll start the task when the activity is started
